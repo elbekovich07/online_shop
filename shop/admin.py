@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Product
+from .models import Product, Category
+
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
@@ -7,3 +8,5 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = ('updated_at', 'price')
     search_fields = ('name', 'description')
     ordering = ('-updated_at',)
+
+admin.site.register(Category)
