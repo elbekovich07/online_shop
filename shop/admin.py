@@ -16,3 +16,4 @@ class CategoryAdmin(admin.ModelAdmin):
     ordering = ('-created_at',)
     list_filter = ('created_at',)
 
+

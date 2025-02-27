@@ -1,15 +1,19 @@
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, get_object_or_404, redirect
 
-from django.shortcuts import render, get_object_or_404
-
+from shop.forms import ProductForm
 from shop.models import Product, Category
 
 
 # Create your views here.
 
 
-def index(request):
-    products = Product.objects.all().order_by('-updated_at')
+def index(request, category_id: int | None = None):
     categories = Category.objects.all()
+    if category_id:
+        products = Product.objects.filter(category_id=category_id)
+    else:
+        products = Product.objects.all().order_by('-updated_at')
     context = {
         'products': products,
         'categories': categories
@@ -24,33 +28,20 @@ def product_detail(request, product_id):
     }
     return render(request, 'shop/detail.html', context)
 
-def category_products(request, category_slug):
-    category = get_object_or_404(Category, slug=category_slug)
-    products = Product.objects.filter(category=category)
-    categories = Category.objects.all()
+
+
+@login_required(login_url='/admin/')
+def product_create(request):
+    form = ProductForm()
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save(commit=False)
+
+            return redirect('index')
 
     context = {
-        'category': category,
-        'products': products,
-        'categories': categories
+        'form': form
     }
-    return render(request, 'shop/home.html', context)
 
-
-def all_products(request):
-    products = Product.objects.all().order_by('-updated_at')
-    categories = Category.objects.all()
-
-    context = {
-        'products': products,
-        'categories': categories
-    }
-    return render(request, 'shop/home.html', context)
-
-
-
-def category_detail(request, category_id):
-    category = get_object_or_404(Category, id=category_id)
-    products = Product.objects.filter(category=category)
-    return render(request, 'shop/category_detail.html', {'category': category, 'products': products})
-
+    return render(request, 'shop/add-product.html', context)
