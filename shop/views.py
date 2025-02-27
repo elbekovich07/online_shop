@@ -45,3 +45,5 @@ def product_create(request):
     }
 
     return render(request, 'shop/add-product.html', context)
+
+
