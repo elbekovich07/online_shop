@@ -1,8 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 
-from shop.forms import ProductForm
 from shop.models import Product, Category
+from shop.forms import ProductForm
 
 
 # Create your views here.
@@ -29,7 +29,6 @@ def product_detail(request, product_id):
     return render(request, 'shop/detail.html', context)
 
 
-
 @login_required(login_url='/admin/')
 def product_create(request):
     form = ProductForm()
@@ -43,7 +42,4 @@ def product_create(request):
     context = {
         'form': form
     }
-
     return render(request, 'shop/add-product.html', context)
-
-
