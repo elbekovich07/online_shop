@@ -64,3 +64,14 @@ def product_update(request, product_id):
 
     return render(request, 'shop/edit-product.html', context)
 
+
+@login_required(login_url='/admin/')
+def product_delete(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    product.delete()
+    return redirect('index')
+
+
+
+
+

@@ -91,16 +91,21 @@
                             <input type="text" class="form-control" placeholder="Your phone">
                         </div>
 
-
                         <div class="form-group mb-3">
 
                             <input type="text" class="btn btn-success" value="Send">
                         </div>
                     </form>
 
+
                 </div>
             </div>
+         {% if user.is_superuser %}
+             <a class="btn btn-danger mt-auto" href="{% url 'product_delete' product.pk %}" class >
+                 Delete</a>
+         {% endif %}
         </div>
+
     </div>
 </section>
 
@@ -110,6 +115,8 @@
             <div class="text-center">
                 <h2>Latest comments</h2>
             </div>
+
+
 
             <div class="media card p-4 mt-2">
                 <div class="media-body">
