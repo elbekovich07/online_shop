@@ -35,7 +35,8 @@ def product_create(request):
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save(commit=False)
+            product = form.save(commit=False)
+            product.save()
 
             return redirect('index')
 
@@ -43,3 +44,23 @@ def product_create(request):
         'form': form
     }
     return render(request, 'shop/add-product.html', context)
+
+
+@login_required(login_url='/admin/')
+def product_update(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    form = ProductForm(instance=product)
+
+    if request.method == 'POST':
+        if form.is_valid():
+            product = form.save(commit=False)
+            product.save()
+
+            return redirect('index')
+
+    context = {
+        'form': form
+    }
+
+    return render(request, 'shop/edit-product.html', context)
+
