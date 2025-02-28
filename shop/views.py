@@ -78,8 +78,8 @@ def product_delete(request, product_id):
 def product_list(request, filter_by=None):
     products = Product.objects.all()
 
-    if filter_by ==  'Likes':
-        products = products.order_by('-Likes')
+    if filter_by and filter_by.lower() == 'likes':
+        products = products.order_by('-likes')
     elif filter_by == 'Expensive':
         products = products.order_by('-price')
     elif filter_by == 'Cheap':
@@ -89,6 +89,15 @@ def product_list(request, filter_by=None):
         'products': products,
     }
     return render(request, 'shop/home.html', context)
+
+
+@login_required(login_url='/admin/')
+def product_like(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    if request.method == 'POST':
+        product.likes += 1
+        product.save()
+        return JsonResponse({'likes': product.likes})
 
 
 

@@ -44,6 +44,7 @@ class Product(BaseModel):
     rating = models.PositiveIntegerField(choices=RatingChoices.choices, default=RatingChoices.ONE)
     quantity = models.PositiveIntegerField(default=1)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products', null=True, blank=True)
+    likes = models.PositiveIntegerField(default=0)
 
     @property
     def discounted_price(self):
