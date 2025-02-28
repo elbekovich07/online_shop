@@ -72,15 +72,15 @@
     </div>
     <div class="row">
         <div class="col-1">
-            <a class="btn btn-outline-dark mt-auto" href="#"> Expensive </a>
+            <a class="btn btn-outline-dark mt-auto" href="{% url 'filter_products' 'Expensive' %}"> Expensive </a>
         </div>
 
         <div class="col-1">
-            <a class="btn btn-outline-dark mt-auto" href="#"> Cheap </a>
+            <a class="btn btn-outline-dark mt-auto" href="{% url 'filter_products' 'Cheap' %}"> Cheap </a>
         </div>
 
         <div class="col-1">
-            <a class="btn btn-outline-dark mt-auto" href="#"> Likes </a>
+            <a class="btn btn-outline-dark mt-auto" href="{% url 'filter_products' 'Likes' %}"> Likes </a>
         </div>
         {% if user.is_superuser %}
             <div class="col-1">
