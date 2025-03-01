@@ -54,14 +54,42 @@
 <section class="py-5">
     <div class="container px-4 px-lg-5 my-5">
        {% if user.is_superuser %}
-           <div class="col-1">
-               <a href="{% url 'product_update' product.pk %}" class="btn btn-warning">Edit</a>
+           <div class="col-md-6">
+               <a href="{% url 'product_update' product.pk %}" class="btn btn-secondary">Edit</a>
+           <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+               Delete
+           </button>
+               <!-- Delete Confirmation Modal -->
+               <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                   <div class="modal-dialog">
+                       <div class="modal-content">
+                           <div class="modal-header">
+                               <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                           </div>
+                           <div class="modal-body">
+                               Are you sure you want to delete <strong>{{ product.title }}</strong>?
+                           </div>
+                           <div class="modal-footer">
+                               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                               <form method="post" action="{% url 'product_delete' product.id %}">
+                                   {% csrf_token %}
+                                   <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                               </form>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+
+
            </div>
+
        {% endif %}
         <div class="row gx-4 gx-lg-5 align-items-center">
             <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" src="{{ product.get_absolute_url }}"
                                        alt="..."/></div>
             <div class="col-md-6">
+
 
                 <div class="small mb-1"><h3>Quantity : {{ product.quantity }}</h3></div>
                 <h1 class="display-5 fw-bolder">{{ product.name }}</h1>
@@ -75,6 +103,7 @@
                         ${{ product.price }}
                     {% endif %}
                 </div>
+
 
                 <p class="lead">{{ product.description }}</p>
                 <div class="d-flex">
@@ -92,22 +121,17 @@
                         </div>
 
                         <div class="form-group mb-3">
-
                             <input type="text" class="btn btn-success" value="Send">
                         </div>
                     </form>
 
-
                 </div>
             </div>
-         {% if user.is_superuser %}
-             <a class="btn btn-danger mt-auto" href="{% url 'product_delete' product.pk %}" class >
-                 Delete</a>
-         {% endif %}
         </div>
 
     </div>
 </section>
+
 
 <div class="container mt-4 mb-4">
     <div class="row">
