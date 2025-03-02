@@ -1,6 +1,9 @@
 
 from django.db import models
 from decimal import Decimal
+from django.contrib.auth.models import User
+from django.utils import timezone
+
 
 from django.db.models.fields import PositiveIntegerField
 
@@ -64,4 +67,17 @@ class Product(BaseModel):
 
     class Meta:
         db_table = 'product'
+
+
+class Comment(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+    class Meta:
+        ordering = ['-created_at']
 

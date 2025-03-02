@@ -105,7 +105,3 @@ def product_like(request, product_id):
         product.likes += 1
         product.save()
         return JsonResponse({'likes': product.likes})
-
-
-
-
