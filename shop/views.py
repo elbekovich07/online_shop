@@ -1,3 +1,5 @@
+from django.db.models import Q
+
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
@@ -10,11 +12,16 @@ from shop.forms import ProductForm
 
 
 def index(request, category_id: int | None = None):
+    search_query = request.GET.get('q', '')
     categories = Category.objects.all()
+
+
     if category_id:
         products = Product.objects.filter(category_id=category_id)
     else:
         products = Product.objects.all().order_by('-updated_at')
+    if search_query:
+        products = Product.objects.filter(Q(name__icontains=search_query) | Q(description__icontains=search_query))
     context = {
         'products': products,
         'categories': categories
