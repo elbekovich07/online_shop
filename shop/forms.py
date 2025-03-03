@@ -8,7 +8,8 @@ class ProductForm(forms.ModelForm):
         model = Product
         exclude = ()
 
+
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
-        fields = ['name', 'email', 'comment']
+        fields = ['text']

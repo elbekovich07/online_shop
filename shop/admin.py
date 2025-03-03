@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, Category
+from .models import Product, Category, Comment
 
 
 @admin.register(Product)
@@ -15,5 +15,9 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = ('title',)
     ordering = ('-created_at',)
     list_filter = ('created_at',)
+
+
+admin.site.register(Comment)
+
 
 

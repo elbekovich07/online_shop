@@ -1,11 +1,16 @@
+from django.views.generic import ListView, CreateView
+from django.urls import reverse_lazy
+
+
+
 from django.db.models import Q
 
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 
-from shop.models import Product, Category
-from shop.forms import ProductForm
+from shop.models import Product, Category, Comment
+from shop.forms import ProductForm, CommentForm
 
 
 # Create your views here.
@@ -105,3 +110,19 @@ def product_like(request, product_id):
         product.likes += 1
         product.save()
         return JsonResponse({'likes': product.likes})
+
+
+@login_required(login_url='/admin/')
+def add_comment(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.product = product
+            comment.user = request.user
+            comment.save()
+            return redirect('product_detail', product_id)
+    else:
+        form = CommentForm()
+    return render(request, 'shop/detail.html', {'form': form})
