@@ -1,16 +1,10 @@
-from django.views.generic import ListView, CreateView
-from django.urls import reverse_lazy
-
-
-
-from django.db.models import Q
-
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 
-from shop.models import Product, Category, Comment
-from shop.forms import ProductForm, CommentForm
+from shop.forms import ProductModelForm, CommentModelForm
+from shop.models import Product, Category
 
 
 # Create your views here.
@@ -19,7 +13,6 @@ from shop.forms import ProductForm, CommentForm
 def index(request, category_id: int | None = None):
     search_query = request.GET.get('q', '')
     categories = Category.objects.all()
-
 
     if category_id:
         products = Product.objects.filter(category_id=category_id)
@@ -35,18 +28,22 @@ def index(request, category_id: int | None = None):
 
 
 def product_detail(request, product_id):
+    categories = Category.objects.all()
     product = get_object_or_404(Product, id=product_id)
+    comments = product.comments.all()
     context = {
-        'product': product
+        'product': product,
+        'categories': categories,
+        'comments': comments
     }
     return render(request, 'shop/detail.html', context)
 
 
 @login_required(login_url='/admin/')
 def product_create(request):
-    form = ProductForm()
+    form = ProductModelForm()
     if request.method == 'POST':
-        form = ProductForm(request.POST, request.FILES)
+        form = ProductModelForm(request.POST, request.FILES)
         if form.is_valid():
             product = form.save(commit=False)
             product.save()
@@ -54,7 +51,8 @@ def product_create(request):
             return redirect('index')
 
     context = {
-        'form': form
+        'form': form,
+        'action': 'Create'
     }
     return render(request, 'shop/add-product.html', context)
 
@@ -62,29 +60,31 @@ def product_create(request):
 @login_required(login_url='/admin/')
 def product_update(request, product_id):
     product = get_object_or_404(Product, id=product_id)
+    form = ProductModelForm(instance=product)
     if request.method == 'POST':
-        form = ProductForm(request.POST, request.FILES, instance=product)
+        form = ProductModelForm(request.POST, request.FILES, instance=product)
         if form.is_valid():
             product = form.save(commit=False)
             product.save()
             return redirect('index')
     else:
-        form = ProductForm(instance=product)
+        form = ProductModelForm(instance=product)
 
     context = {
-        'form': form
+        'product': product,
+        'form': form,
+        'action': 'Update'
     }
     return render(request, 'shop/edit-product.html', context)
 
 
-
-
 @login_required(login_url='/admin/')
 def product_delete(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
-    product.delete()
-    return redirect('index')
-
+    product = Product.objects.get(id=product_id)
+    if product:
+        product.delete()
+        return redirect('index')
+    return render(request, 'shop/detail.html', {'product': product})
 
 
 def product_list(request, filter_by=None):
@@ -112,17 +112,23 @@ def product_like(request, product_id):
         return JsonResponse({'likes': product.likes})
 
 
-@login_required(login_url='/admin/')
-def add_comment(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
+def comment_view(request, pk):
+    product = Product.objects.get(id=pk)
+    form = CommentModelForm()
     if request.method == 'POST':
-        form = CommentForm(request.POST)
+        form = CommentModelForm(request.POST)
         if form.is_valid():
             comment = form.save(commit=False)
+            rating = request.POST.get('rating')
+            print(type(rating))
+            comment.rating = rating
             comment.product = product
-            comment.user = request.user
             comment.save()
-            return redirect('product_detail', product_id)
-    else:
-        form = CommentForm()
-    return render(request, 'shop/detail.html', {'form': form})
+            return redirect('product_detail', product.id)
+
+    context = {
+        'form': form,
+        'product': product
+    }
+
+    return render(request, 'shop/detail.html', context)

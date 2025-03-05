@@ -1,5 +1,4 @@
 {% extends 'shop/base/base.html' %}
-{% load register_tags %}
 {% load static %}
 
 
@@ -49,7 +48,8 @@
                         <div class="card h-100">
                             <!-- Sale badge-->
                             {% if product.discount %}
-                                <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">
+                                <div class="badge bg-dark text-white position-absolute"
+                                     style="top: 0.5rem; right: 0.5rem">
                                     Sale
                                 </div>
                             {% endif %}
@@ -61,10 +61,8 @@
                                     <!-- Product name-->
                                     <h5 class="fw-bolder">{{ product.name }}</h5>
                                     <!-- Product reviews-->
-                                    <div class="d-flex justify-content-center small text-warning mb-2">
-                                        {% for _ in product.rating|get_range %}
-                                            <div class="bi-star-fill"></div>
-                                        {% endfor %}
+                                    <div>
+                                        <h5>rating : {{ product.comment_rating }}</h5>
                                     </div>
                                     <!-- Product price-->
                                     {% if product.discount %}
@@ -81,12 +79,14 @@
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
                                 <div class="text-center"><a class="btn btn-outline-dark mt-auto"
                                                             href="{% url 'product_detail' product.id %}">View
-                                    product
-                                </a></div>
+                                    product</a></div>
+
+
                             </div>
                         </div>
                     </div>
                 {% endfor %}
+
             </div>
         </div>
     </section>

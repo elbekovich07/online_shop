@@ -1,6 +1,5 @@
 from django.contrib import admin
 
-
 from django.urls import path
 from shop import views
 
@@ -13,5 +12,5 @@ urlpatterns = [
     path('product-delete/<int:product_id>/', views.product_delete, name='product_delete'),
     path('filter/<str:filter_by>/', views.product_list, name='filter_products'),
     path('product/<int:product_id>/like/', views.product_like, name='product_like'),
-    path('add_comment/<int:product_id>/', views.add_comment, name='add_comment'),
+    path('comment-view/<int:pk>/', views.comment_view, name='comment_view'),
 ]

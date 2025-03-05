@@ -1,15 +1,15 @@
 from django import forms
 
-from shop.models import Product, Category, Comment
+from shop.models import Product, Comment
 
 
-class ProductForm(forms.ModelForm):
+class ProductModelForm(forms.ModelForm):
     class Meta:
         model = Product
         exclude = ()
 
 
-class CommentForm(forms.ModelForm):
+class CommentModelForm(forms.ModelForm):
     class Meta:
         model = Comment
-        fields = ['text']
+        exclude = ('product',)

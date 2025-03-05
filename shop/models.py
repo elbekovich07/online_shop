@@ -1,53 +1,40 @@
-
 from django.db import models
-from decimal import Decimal
-from django.contrib.auth.models import User
-from django.utils import timezone
+from decimal import Decimal, InvalidOperation
+
+from django.db.models import Avg
 
 
-from django.db.models.fields import PositiveIntegerField
-
+# Create your models here.
 
 class BaseModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
 
-
     class Meta:
         abstract = True
 
-class Category(BaseModel):
-    title = models.CharField(max_length=100, unique=True)
 
+class Category(BaseModel):
+    title = models.CharField(max_length=200, unique=True)
 
     def __str__(self):
         return self.title
 
     class Meta:
         db_table = 'category'
-        verbose_name = 'Category'
+        verbose_name = 'category'
         verbose_name_plural = 'Categories'
         ordering = ['-id']
 
 
-
 class Product(BaseModel):
-    class RatingChoices(models.IntegerChoices):
-        ONE = 1
-        TWO = 2
-        THREE = 3
-        FOUR = 4
-        FIVE = 5
-
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=255, unique=True)
     description = models.TextField(null=True, blank=True)
-    price = models.DecimalField( max_digits=10, decimal_places=2)
-    image = models.ImageField(upload_to='images/', null=True, blank=True)
+    price = models.DecimalField(max_digits=14, decimal_places=2)
+    image = models.ImageField(upload_to='images/', null=True, blank=True, default='images/no_image.png')
     discount = models.PositiveIntegerField(default=0)
-    rating = models.PositiveIntegerField(choices=RatingChoices.choices, default=RatingChoices.ONE)
     quantity = models.PositiveIntegerField(default=1)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products', null=True, blank=True)
-    likes = models.PositiveIntegerField(default=0)
 
     @property
     def discounted_price(self):
@@ -56,11 +43,20 @@ class Product(BaseModel):
         return Decimal(f'{self.price}').quantize(Decimal('0.00'))
 
     @property
+    def comment_rating(self):
+        products = self.comments.aggregate(product_avg_rating=Avg('rating'))
+        rating = products['product_avg_rating']
+
+        if rating is not None:
+            try:
+                return Decimal(str(rating)).quantize(Decimal('0.000'))
+            except InvalidOperation:
+                return Decimal('0.000')
+        return Decimal('0.000')
+
+    @property
     def get_absolute_url(self):
-        if not self.image:
-            return None
-        else:
-            return self.image.url
+        return self.image.url
 
     def __str__(self):
         return self.name
@@ -69,11 +65,20 @@ class Product(BaseModel):
         db_table = 'product'
 
 
-class Comment(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='comments')
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    text = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
+class Comment(BaseModel):
+    class RatingChoice(models.IntegerChoices):
+        ONE = 1
+        TWO = 2
+        THREE = 3
+        FOUR = 4
+        FIVE = 5
+
+    full_name = models.CharField(max_length=100, null=True, blank=True)
+    email = models.EmailField()
+    content = models.TextField()
+    rating = models.PositiveIntegerField(choices=RatingChoice.choices, default=RatingChoice.ONE.value)
+    product = models.ForeignKey('Product', on_delete=models.CASCADE, related_name='comments')
+    is_private = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.text
+        return f'{self.email} => {self.rating} => {self.product.name}'
