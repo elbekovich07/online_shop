@@ -1,12 +1,10 @@
-from tkinter.font import names
-
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib import messages
+from pyexpat.errors import messages
 
-from shop.forms import ProductModelForm, CommentModelForm
+from shop.forms import ProductModelForm, CommentModelForm, OrderModelForm
 from shop.models import Product, Category
 
 
@@ -137,21 +135,31 @@ def comment_view(request, pk):
     return render(request, 'shop/detail.html', context)
 
 
-def place_order(request, product_id):
+def order_view(request, product_id):
+    product = Product.objects.get(id=product_id)
+    form = OrderModelForm()
     if request.method == 'POST':
-        product = get_object_or_404(Product, id=product_id)
-        name = request.POST.get('name')
-        phone = request.POST.get('phone')
-
-        if not name or not phone:
-            messages.error(request, "Iltimos, ism va telefon raqamni kiriting.")
-            return redirect('product_detail', product_id=product.id)
-
-        if product.quantity > 0:
-            product.quantity -= 1
-            product.save()
-            messages.success(request, "Buyurtma muvaffaqiyatli amalga oshirildi!")
-        else:
-            messages.error(request, "Mahsulot tugagan!")
-
-        return redirect('product_detail', product_id=product.id)
+        form = OrderModelForm(request.POST)
+        quantity = int(request.POST.get('quantity'))
+        if form.is_valid():
+            if product.quantity >= quantity:
+                order = form.save(commit=False)
+                order.product = product
+                product.quantity = product.quantity - quantity
+                product.save()
+                order.save()
+                # message success
+                messages.add_message(
+                    request,
+                    messages.SUCCESS,
+                    'Order successfully created'
+                )
+                return redirect('product_detail', product.id)
+            else:
+                # error message
+                messages.add_message(
+                    request,
+                    messages.ERROR,
+                    'Something is wrong'
+                )
+    return render(request, 'shop/detail.html', {'form': form, 'product': product})

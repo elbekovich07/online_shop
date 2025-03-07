@@ -13,8 +13,8 @@ urlpatterns = [
     path('filter/<str:filter_by>/', views.product_list, name='filter_products'),
     path('product/<int:product_id>/like/', views.product_like, name='product_like'),
     path('comment-view/<int:pk>/', views.comment_view, name='comment_view'),
-    path('orders/<int:product_id>/', views.place_order, name='place_order'),
     path('product/<int:product_id>/', views.product_detail, name='product_detail'),
+    path('order-view/<int:pk>/', views.order_view, name='order_view')
 
 ]
 
