@@ -1,8 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from pyexpat.errors import messages
+from django.contrib import messages
 
 from shop.forms import ProductModelForm, CommentModelForm, OrderModelForm
 from shop.models import Product, Category
@@ -91,8 +90,8 @@ def product_delete(request, product_id):
 def product_list(request, filter_by=None):
     products = Product.objects.all()
 
-    if filter_by and filter_by.lower() == 'likes':
-        products = products.order_by('-likes')
+    if filter_by and filter_by.lower() == 'rating':
+        products = products.order_by('-rating')
     elif filter_by == 'Expensive':
         products = products.order_by('-price')
     elif filter_by == 'Cheap':
@@ -103,14 +102,6 @@ def product_list(request, filter_by=None):
     }
     return render(request, 'shop/home.html', context)
 
-
-@login_required(login_url='/admin/')
-def product_like(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
-    if request.method == 'POST':
-        product.likes += 1
-        product.save()
-        return JsonResponse({'likes': product.likes})
 
 
 def comment_view(request, pk):
@@ -135,31 +126,36 @@ def comment_view(request, pk):
     return render(request, 'shop/detail.html', context)
 
 
-def order_view(request, product_id):
-    product = Product.objects.get(id=product_id)
+from django.shortcuts import get_object_or_404
+
+def order_view(request, pk):
+    product = get_object_or_404(Product, id=pk)
     form = OrderModelForm()
+
     if request.method == 'POST':
         form = OrderModelForm(request.POST)
-        quantity = int(request.POST.get('quantity'))
+        quantity = request.POST.get('quantity')
+
+        if not quantity:
+            messages.error(request, "Please enter a quantity.")
+            return render(request, 'shop/detail.html', {'form': form, 'product': product})
+
+        try:
+            quantity = int(quantity)
+        except ValueError:
+            messages.error(request, "Invalid quantity. Please enter a number.")
+            return render(request, 'shop/detail.html', {'form': form, 'product': product})
+
         if form.is_valid():
             if product.quantity >= quantity:
                 order = form.save(commit=False)
                 order.product = product
-                product.quantity = product.quantity - quantity
+                product.quantity -= quantity
                 product.save()
                 order.save()
-                # message success
-                messages.add_message(
-                    request,
-                    messages.SUCCESS,
-                    'Order successfully created'
-                )
+                messages.success(request, 'Order successfully created')
                 return redirect('product_detail', product.id)
             else:
-                # error message
-                messages.add_message(
-                    request,
-                    messages.ERROR,
-                    'Something is wrong'
-                )
+                messages.error(request, 'Not enough stock available.')
+
     return render(request, 'shop/detail.html', {'form': form, 'product': product})
