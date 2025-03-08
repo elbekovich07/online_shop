@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'shop.apps.ShopConfig',
     'phonenumber_field',
+    'adminsortable2',
+    'import_export',
 ]
 
 MIDDLEWARE = [
@@ -125,3 +127,18 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'shop/media')
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+JAZZMIN_SETTINGS = {
+    "site_title": "My Admin Panel",
+    "site_header": "My Dashboard",
+    "site_brand": "MyBrand",
+    "welcome_sign": "Xush kelibsiz, Admin!",
+    "copyright": "© 2025 MyBrand",
+    "show_sidebar": True,
+    "navigation_expanded": True,
+}
+
+
+

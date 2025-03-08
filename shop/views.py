@@ -1,10 +1,10 @@
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
+from django.db.models import Q, Avg
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 
 from shop.forms import ProductModelForm, CommentModelForm, OrderModelForm
-from shop.models import Product, Category
+from shop.models import Product, Category, Comment
 
 
 # Create your views here.
@@ -13,13 +13,25 @@ from shop.models import Product, Category
 def index(request, category_id: int | None = None):
     search_query = request.GET.get('q', '')
     categories = Category.objects.all()
+    filter_query = request.GET.get('filter', '')
 
     if category_id:
         products = Product.objects.filter(category_id=category_id)
     else:
         products = Product.objects.all().order_by('-updated_at')
+
     if search_query:
         products = Product.objects.filter(Q(name__icontains=search_query) | Q(description__icontains=search_query))
+
+    if filter_query == 'expensive':
+        products = products.order_by('-price')
+
+    elif filter_query == 'cheap':
+        products = products.order_by('price')
+
+    elif filter_query == 'rating':
+        products = products.annotate(rating_avg=Avg('comments__rating')).order_by('-rating_avg')
+
     context = {
         'products': products,
         'categories': categories
@@ -27,14 +39,18 @@ def index(request, category_id: int | None = None):
     return render(request, 'shop/home.html', context)
 
 
+
 def product_detail(request, product_id):
     categories = Category.objects.all()
     product = get_object_or_404(Product, id=product_id)
+    related_products = Product.objects.all().annotate(rating_avg=Avg('comments__rating')).filter(
+        category=product.category).exclude(id=product.id).order_by('-rating_avg')
     comments = product.comments.all()
     context = {
         'product': product,
         'categories': categories,
-        'comments': comments
+        'comments': comments,
+        'related_products': related_products,
     }
     return render(request, 'shop/detail.html', context)
 

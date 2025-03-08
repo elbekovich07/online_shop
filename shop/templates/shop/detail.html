@@ -6,60 +6,59 @@
     Product Detail
 {% endblock %}
 
+
 {% block product_detail_content %}
     <section class="py-5">
         <div class="container px-4 px-lg-5 my-5">
             {% if user.is_superuser %}
                 <div class="col-md-6">
-                <a href="{% url 'product_update' product.pk %}" class="btn btn-secondary">Edit</a>
-                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                    Delete
-                </button>
-
-                <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel"
-                     aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
+                    <a href="{% url 'product_update' product.pk %}" class="btn btn-secondary">Edit</a>
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                        Delete
+                    </button>
+                    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                </div>
+                                <form method="post" action="{% url 'product_delete' product.id %}">
+                                    <div class="modal-body">
+                                        Are you sure you want to delete <strong>{{ product.name }}</strong>?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                            Cancel
+                                        </button>
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                                    </div>
+                                </form>
                             </div>
-                            <form method="post" action="{% url 'product_delete' product.id %}">
-
-                                <div class="modal-body">
-                                    Are you sure you want to delete <strong>{{ product.name }}</strong>?
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                        Cancel
-                                    </button>
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
-                                </div>
-                            </form>
-
                         </div>
                     </div>
                 </div>
             {% endif %}
             <div class="row gx-4 gx-lg-5 align-items-center">
-                <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" src="{{ product.get_absolute_url }}"
-                                           alt="..."/></div>
+                <div class="col-md-6">
+                    <img class="card-img-top mb-5 mb-md-0" src="{{ product.get_absolute_url }}" alt="..."/>
+                </div>
                 <div class="col-md-6">
                     <div class="small mb-1"><h3>Quantity : {{ product.quantity }}</h3></div>
                     <h1 class="display-5 fw-bolder">{{ product.name }}</h1>
                     <div class="fs-5 mb-5">
                         {% if product.discount %}
                             <span class="text-muted text-decoration-line-through">
-                                        ${{ product.price }}
-                                        </span>
+                            ${{ product.price }}
+                        </span>
                             ${{ product.discounted_price }}
                         {% else %}
                             ${{ product.price }}
                         {% endif %}
                     </div>
-
                     <p class="lead">{{ product.description }}</p>
                     <div class="d-flex">
                         <form method="POST" action="{% url 'order_view' product.id %}">
@@ -81,35 +80,51 @@
                                         {{ form.phone.errors }}
                                     </div>
                                 {% endif %}
-
                             </div>
-
                             <div class="form-group mb-3">
                                 <label for="formGroupExampleInput2">Quantity</label>
                                 <input type="number" name="quantity" class="form-control" placeholder="Quantity">
                             </div>
-
                             <div class="form-group mb-3">
-
                                 <input type="submit" class="btn btn-success" value="Send">
                             </div>
                             <div class="form-group mb-3">
                                 {% if messages %}
-                                    <div class="messages">
+                                    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1050;">
                                         {% for message in messages %}
-                                            <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% endif %}">
-                                                {{ message }}
+                                            <div class="alert alert-{% if message.tags == 'success' %}success{% elif message.tags == 'error' %}danger{% endif %} alert-dismissible fade show d-flex align-items-center"
+                                                 role="alert"
+                                                 style="border-left: 5px solid {% if message.tags == 'success' %}green{% else %}red{% endif %};">
+                                                {% if message.tags == 'success' %}
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                         fill="green"
+                                                         class="bi bi-check-circle-fill me-2" viewBox="0 0 16 16">
+                                                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM6.97 11.03a.75.75 0 0 0 1.06 0l4.242-4.243a.75.75 0 1 0-1.06-1.06L7.5 9.44 5.79 7.72a.75.75 0 1 0-1.08 1.04l2.26 2.27z"/>
+                                                    </svg>
+                                                {% else %}
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                         fill="red"
+                                                         class="bi bi-x-circle-fill me-2" viewBox="0 0 16 16">
+                                                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 5.354a.5.5 0 1 1 .708-.708L8 6.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 7l2.647 2.646a.5.5 0 0 1-.708.708L8 7.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 7 5.354 5.354z"/>
+                                                    </svg>
+                                                {% endif %}
+                                                <div>{{ message }}</div>
+                                                <button type="button" class="btn-close ms-auto"
+                                                        data-bs-dismiss="alert"></button>
                                             </div>
                                         {% endfor %}
                                     </div>
                                 {% endif %}
+
+
+                            </div>
                         </form>
                     </div>
-
                 </div>
             </div>
-            </div>
+        </div>
     </section>
+
 
 
     <div class="container mt-4 mb-4">
@@ -188,101 +203,49 @@
         <div class="container px-4 px-lg-5 mt-5">
             <h2 class="fw-bolder mb-4">Related products</h2>
             <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-                <div class="col mb-5">
-                    <div class="card h-100">
-                        <!-- Product image-->
-                        <img class="card-img-top"
-                             src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..."/>
-                        <!-- Product details-->
-                        <div class="card-body p-4">
-                            <div class="text-center">
-                                <!-- Product name-->
-                                <h5 class="fw-bolder">Fancy Product</h5>
-                                <!-- Product price-->
-                                $40.00 - $80.00
+                {% for product in related_products %}
+                    <div class="col mb-5">
+                        <div class="card h-100">
+                            <!-- Sale badge-->
+                            {% if product.discount %}
+                                <div class="badge bg-dark text-white position-absolute"
+                                     style="top: 0.5rem; right: 0.5rem">
+                                    Sale
+                                </div>
+                            {% endif %}
+                            <!-- Product image-->
+                            <img class="card-img-top" src="{{ product.get_absolute_url }}" alt="..."/>
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder">{{ product.name }}</h5>
+                                    <!-- Product reviews-->
+                                    <div>
+                                        <h5>rating : {{ product.comment_rating }}</h5>
+                                    </div>
+                                    <!-- Product price-->
+                                    {% if product.discount %}
+                                        <span class="text-muted text-decoration-line-through">
+                                    ${{ product.price }}
+                                    </span>
+                                        ${{ product.discounted_price }}
+                                    {% else %}
+                                        ${{ product.price }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <!-- Product actions-->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto"
+                                                            href="{% url 'product_detail' product.id %}">View
+                                    product</a></div>
+
+
                             </div>
                         </div>
-                        <!-- Product actions-->
-                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                            <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="detail.html">View
-                                product</a></div>
-
-
-                        </div>
                     </div>
-                </div>
-
-
-                <div class="col mb-5">
-                    <div class="card h-100">
-                        <!-- Product image-->
-                        <img class="card-img-top"
-                             src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..."/>
-                        <!-- Product details-->
-                        <div class="card-body p-4">
-                            <div class="text-center">
-                                <!-- Product name-->
-                                <h5 class="fw-bolder">Fancy Product</h5>
-                                <!-- Product price-->
-                                $40.00 - $80.00
-                            </div>
-                        </div>
-                        <!-- Product actions-->
-                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                            <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="detail.html">View
-                                product</a></div>
-
-
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col mb-5">
-                    <div class="card h-100">
-                        <!-- Product image-->
-                        <img class="card-img-top"
-                             src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..."/>
-                        <!-- Product details-->
-                        <div class="card-body p-4">
-                            <div class="text-center">
-                                <!-- Product name-->
-                                <h5 class="fw-bolder">Fancy Product</h5>
-                                <!-- Product price-->
-                                $40.00 - $80.00
-                            </div>
-                        </div>
-                        <!-- Product actions-->
-                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                            <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="detail.html">View
-                                product</a></div>
-
-
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col mb-5">
-                    <div class="card h-100">
-                        <!-- Product image-->
-                        <img class="card-img-top"
-                             src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..."/>
-                        <!-- Product details-->
-                        <div class="card-body p-4">
-                            <div class="text-center">
-                                <!-- Product name-->
-                                <h5 class="fw-bolder">Fancy Product</h5>
-                                <!-- Product price-->
-                                $40.00 - $80.00
-                            </div>
-                        </div>
-                        <!-- Product actions-->
-                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                            <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="detail.html">View
-                                product</a></div>
-
-                        </div>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </section>

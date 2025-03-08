@@ -2,7 +2,6 @@ from django.db import models
 from decimal import Decimal, InvalidOperation
 from phonenumber_field.modelfields import PhoneNumberField
 
-
 from django.db.models import Avg
 
 

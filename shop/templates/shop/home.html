@@ -22,21 +22,22 @@
         </div>
         <div class="row">
             <div class="col-1">
-                <a class="btn btn-outline-dark mt-auto" href="{% url 'filter_products' 'Expensive' %}"> Expensive </a>
+                <a class="btn btn-outline-dark mt-auto" href="?filter=expensive"> Expensive </a>
             </div>
 
             <div class="col-1">
-                <a class="btn btn-outline-dark mt-auto" href="{% url 'filter_products' 'Cheap' %}"> Cheap </a>
+                <a class="btn btn-outline-dark mt-auto" href="?filter=cheap"> Cheap </a>
             </div>
 
             <div class="col-1">
-                <a class="btn btn-outline-dark mt-auto" href="{% url 'filter_products' 'Likes' %}"> Likes </a>
+                <a class="btn btn-outline-dark mt-auto" href="?filter=rating"> Rating </a>
             </div>
             {% if user.is_superuser %}
                 <div class="col-1">
                     <a class="btn btn-outline-dark mt-auto" href="{% url 'product_create' %}">Add Product</a>
                 </div>
             {% endif %}
+
 
         </div>
     </div>
