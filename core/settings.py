@@ -38,8 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'shop.apps.ShopConfig',
     'phonenumber_field',
-    'adminsortable2',
     'import_export',
+    'adminsortable2',
+
 ]
 
 MIDDLEWARE = [
@@ -129,16 +130,28 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'shop/media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-
 JAZZMIN_SETTINGS = {
-    "site_title": "My Admin Panel",
-    "site_header": "My Dashboard",
+    "site_title": "MyBrand Admin",
+    "site_header": "MyBrand",
     "site_brand": "MyBrand",
     "welcome_sign": "Xush kelibsiz, Admin!",
-    "copyright": "© 2025 MyBrand",
-    "show_sidebar": True,
-    "navigation_expanded": True,
+    "show_ui_builder": False,
+    "theme": "darkly",
+    "custom_css": "css/dark-mode.css",
 }
 
 
+JAZZMIN_UI_TWEAKS = {
+    "navbar": "navbar-dark bg-black",
+    "sidebar": "sidebar-dark-primary",
+    "actions_sticky_top": True,
+}
+
+
+JAZZMIN_SETTINGS["icons"] = {
+    "auth": "fas fa-user-shield",
+    "auth.Group": "fas fa-users",
+    "shop.Product": "fas fa-box",
+    "shop.Category": "fas fa-list",
+}
 

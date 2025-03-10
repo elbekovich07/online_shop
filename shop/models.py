@@ -1,8 +1,8 @@
-from django.db import models
 from decimal import Decimal, InvalidOperation
-from phonenumber_field.modelfields import PhoneNumberField
 
+from django.db import models
 from django.db.models import Avg
+from phonenumber_field.modelfields import PhoneNumberField
 
 
 # Create your models here.
@@ -10,6 +10,7 @@ from django.db.models import Avg
 class BaseModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+    my_order = models.PositiveIntegerField(null=True, blank=True)
 
     class Meta:
         abstract = True
@@ -36,6 +37,7 @@ class Product(BaseModel):
     discount = models.PositiveIntegerField(default=0)
     quantity = models.PositiveIntegerField(default=1)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products', null=True, blank=True)
+    is_active = models.BooleanField(default=True)
 
     @property
     def discounted_price(self):
@@ -64,6 +66,7 @@ class Product(BaseModel):
 
     class Meta:
         db_table = 'product'
+        ordering = ['my_order']
 
 
 class Comment(BaseModel):
@@ -80,6 +83,7 @@ class Comment(BaseModel):
     rating = models.PositiveIntegerField(choices=RatingChoice.choices, default=RatingChoice.ONE.value)
     product = models.ForeignKey('Product', on_delete=models.CASCADE, related_name='comments')
     is_private = models.BooleanField(default=False)
+    is_approved = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.email} => {self.rating} => {self.product.name}'

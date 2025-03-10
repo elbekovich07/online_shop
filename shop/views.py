@@ -1,10 +1,10 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q, Avg
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib import messages
+from django.shortcuts import render, redirect
 
 from shop.forms import ProductModelForm, CommentModelForm, OrderModelForm
-from shop.models import Product, Category, Comment
+from shop.models import Product, Category
 
 
 # Create your views here.
@@ -37,7 +37,6 @@ def index(request, category_id: int | None = None):
         'categories': categories
     }
     return render(request, 'shop/home.html', context)
-
 
 
 def product_detail(request, product_id):
@@ -119,7 +118,6 @@ def product_list(request, filter_by=None):
     return render(request, 'shop/home.html', context)
 
 
-
 def comment_view(request, pk):
     product = Product.objects.get(id=pk)
     form = CommentModelForm()
@@ -143,6 +141,7 @@ def comment_view(request, pk):
 
 
 from django.shortcuts import get_object_or_404
+
 
 def order_view(request, pk):
     product = get_object_or_404(Product, id=pk)

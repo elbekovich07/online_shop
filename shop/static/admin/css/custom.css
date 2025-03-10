@@ -1,0 +1,27 @@
+body {
+    background-color: #121212 !important;
+    color: #ffffff !important;
+}
+
+.navbar {
+    background-color: #1e1e2f !important;
+    border-bottom: 1px solid #333 !important;
+}
+
+.sidebar {
+    background-color: #181818 !important;
+}
+
+.sidebar a {
+    color: #ffffff !important;
+}
+
+.card, .content-wrapper, .main-footer {
+    background-color: #222 !important;
+    color: #fff !important;
+    border: 1px solid #333 !important;
+}
+
+a {
+    color: #4fa3d1 !important;
+}
