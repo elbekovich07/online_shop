@@ -54,7 +54,7 @@ reject_comments.short_description = "Mark selected products as rejected"
 
 
 @admin.register(Product)
-class ProductAdmin( ImportExportModelAdmin, admin.ModelAdmin):
+class ProductAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     resource_class = ProductResource
     list_display = ('name', 'price', 'status_badge', 'updated_at', 'image_tag', 'my_order')
     list_filter = ('updated_at', 'price', 'is_active')
