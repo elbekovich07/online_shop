@@ -34,7 +34,7 @@
             </div>
             {% if user.is_superuser %}
                 <div class="col-1">
-                    <a class="btn btn-outline-dark mt-auto" href="{% url 'product_create' %}">Add Product</a>
+                    <a class="btn btn-outline-dark mt-auto" href="{% url 'shop:product_create' %}">Add Product</a>
                 </div>
             {% endif %}
 

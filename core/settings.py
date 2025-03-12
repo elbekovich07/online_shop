@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'import_export',
     'adminsortable2',
-
+    'users.apps.UsersConfig',
 ]
 
 MIDDLEWARE = [
