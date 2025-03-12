@@ -155,3 +155,5 @@ JAZZMIN_SETTINGS["icons"] = {
     "shop.Category": "fas fa-list",
 }
 
+
+AUTH_USER_MODEL = 'users.CustomUser'

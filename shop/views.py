@@ -81,7 +81,7 @@ def product_update(request, product_id):
         if form.is_valid():
             product = form.save(commit=False)
             product.save()
-            return redirect('index')
+            return redirect('shop:index')
     else:
         form = ProductModelForm(instance=product)
 
