@@ -63,7 +63,7 @@ def product_create(request):
             product = form.save(commit=False)
             product.save()
 
-            return redirect('index')
+            return redirect('shop:index')
 
     context = {
         'form': form,
@@ -98,7 +98,8 @@ def product_delete(request, product_id):
     product = Product.objects.get(id=product_id)
     if product:
         product.delete()
-        return redirect('index')
+        return redirect('shop:index')
+
     return render(request, 'shop/detail.html', {'product': product})
 
 
@@ -130,7 +131,7 @@ def comment_view(request, pk):
             comment.rating = rating
             comment.product = product
             comment.save()
-            return redirect('product_detail', product.id)
+            return redirect('shop:product_detail', product.id)
 
     context = {
         'form': form,
@@ -169,7 +170,7 @@ def order_view(request, pk):
                 product.save()
                 order.save()
                 messages.success(request, 'Order successfully created')
-                return redirect('product_detail', product.id)
+                return redirect('shop:product_detail', product.id)
             else:
                 messages.error(request, 'Not enough stock available.')
 

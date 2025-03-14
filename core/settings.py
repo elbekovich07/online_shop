@@ -156,4 +156,4 @@ JAZZMIN_SETTINGS["icons"] = {
 }
 
 
-AUTH_USER_MODEL = 'users.CustomUser'
+AUTH_USER_MODEL = "users.CustomUser"

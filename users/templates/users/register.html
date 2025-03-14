@@ -39,27 +39,49 @@
                                 <div class="col-md-7 d-flex flex-center">
                                     <div class="p-4 p-md-5 flex-grow-1">
                                         <h3>Register</h3>
-                                        <form>
+
+                                        {% if messages %}
+                                            {% for message in messages %}
+                                                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                                            {% endfor %}
+                                        {% endif %}
+
+                                        {% if form.errors %}
+                                            <div class="alert alert-danger">
+                                                <ul>
+                                                    {% for field, errors in form.errors.items %}
+                                                        {% for error in errors %}
+                                                            <li>{{ error }}</li>
+                                                        {% endfor %}
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        {% endif %}
+
+                                        <form method="post" action="{% url 'users:register_page' %}">
+                                            {% csrf_token %}
+
+
                                             <div class="mb-3">
                                                 <label class="form-label" for="card-name">Name</label>
-                                                <input class="form-control" type="text" autocomplete="on"
+                                                <input class="form-control" name="name" type="text" autocomplete="on"
                                                        id="card-name"/>
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label" for="card-email">Email address</label>
-                                                <input class="form-control" type="email" autocomplete="on"
+                                                <input class="form-control"name="email" type="email" autocomplete="on"
                                                        id="card-email"/>
                                             </div>
                                             <div class="row gx-2">
                                                 <div class="mb-3 col-sm-6">
                                                     <label class="form-label" for="card-password">Password</label>
-                                                    <input class="form-control" type="password" autocomplete="on"
+                                                    <input class="form-control" name="password1" autocomplete="on"
                                                            id="card-password"/>
                                                 </div>
                                                 <div class="mb-3 col-sm-6">
                                                     <label class="form-label" for="card-confirm-password">Confirm
                                                         Password</label>
-                                                    <input class="form-control" type="password" autocomplete="on"
+                                                    <input class="form-control" name="password2" autocomplete="on"
                                                            id="card-confirm-password"/>
                                                 </div>
                                             </div>
