@@ -1,8 +1,8 @@
-from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
+
 from users.forms import LoginForm, RegisterForm
-from .models import CustomUser
 
 
 # Create your views here.
@@ -57,4 +57,4 @@ def register_page(request):
 def logout_page(request):
     if request.method == 'POST':
         logout(request)
-        return redirect('shop:index')
+    return redirect('shop:index')

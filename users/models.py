@@ -11,7 +11,6 @@ from users.managers import CustomUserManager
 
 
 class CustomUser(AbstractUser):
-    username = None
     email = models.EmailField(_("email address"), unique=True)
     phone_number = PhoneNumberField(region='UZ')
 
